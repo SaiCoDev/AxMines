@@ -126,7 +126,7 @@ class AxMinesPlugin : AxPlugin() {
         manager.dependency("org.slf4j:slf4j-api:2.0.9")
         manager.dependency("org.apache.commons:commons-text:1.11.0")
         manager.dependency("commons-io:commons-io:2.15.0")
-        manager.dependency("org.jetbrains.kotlin:kotlin-stdlib:1.9.21")
+        manager.dependency("org.jetbrains.kotlin:kotlin-stdlib:2.1.10")
     }
 
     override fun reload() {

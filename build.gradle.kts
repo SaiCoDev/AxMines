@@ -1,10 +1,11 @@
 plugins {
-    kotlin("jvm") version "1.9.21"
-    id("io.github.goooler.shadow") version "8.1.7"
+    kotlin("jvm") version "2.1.10"
+    id("com.gradleup.shadow") version "9.4.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
 group = "com.artillexstudios.axmines"
-version = "1.6.0"
+version = "1.7.0"
 
 repositories {
     mavenCentral()
@@ -18,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.artillexstudios.axapi:axapi:1.4.841:all")
+    implementation("com.artillexstudios.axapi:axapi:2.1.0-DEV-9:all")
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("dev.triumphteam:triumph-gui:3.1.7")
     compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
@@ -27,7 +28,7 @@ dependencies {
     compileOnly("commons-io:commons-io:2.15.0")
     compileOnly("org.apache.commons:commons-math3:3.6.1")
     compileOnly("me.clip:placeholderapi:2.11.5")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.21")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.1.10")
     compileOnly("com.github.oraxen:oraxen:1.161.0")
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.1")
 }
@@ -61,6 +62,14 @@ tasks {
         filesMatching("plugin.yml") {
             expand(mapOf("version" to project.version))
         }
+    }
+
+    runServer {
+        minecraftVersion("1.21.11")
+    }
+
+    build {
+        dependsOn(shadowJar)
     }
 }
 
