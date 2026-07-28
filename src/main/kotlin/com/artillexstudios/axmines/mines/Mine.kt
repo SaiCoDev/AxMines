@@ -3,7 +3,6 @@ package com.artillexstudios.axmines.mines
 import com.artillexstudios.axapi.scheduler.Scheduler
 import com.artillexstudios.axapi.selection.Cuboid
 import com.artillexstudios.axapi.serializers.Serializers
-import com.artillexstudios.axapi.utils.ActionBar
 import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axmines.config.impl.Config
@@ -76,7 +75,6 @@ class Mine(val file: File, reset: Boolean = true) {
                 Placeholder.parsed("blocksbroken", String.format("%.2f", (volume - blocks))),
                 Placeholder.parsed("time", TimeUtils.format((config.RESET_TICKS - tick) / 20 * 1000, this))
             )
-            val bar = ActionBar(formatted)
 
             val x1 = cuboid.maxX.toDouble()
             val y1 = cuboid.maxY.toDouble()
@@ -104,7 +102,7 @@ class Mine(val file: File, reset: Boolean = true) {
                 }
 
                 if (distance <= config.ACTION_BAR_RANGE * config.ACTION_BAR_RANGE) {
-                    bar.send(it)
+                    it.sendActionBar(formatted)
                 }
             }
         }

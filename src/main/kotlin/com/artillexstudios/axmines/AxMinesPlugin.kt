@@ -2,7 +2,6 @@ package com.artillexstudios.axmines
 
 import com.artillexstudios.axapi.AxPlugin
 import com.artillexstudios.axapi.dependencies.DependencyManagerWrapper
-import com.artillexstudios.axapi.metrics.AxMetrics
 import com.artillexstudios.axapi.updatechecker.UpdateCheck
 import com.artillexstudios.axapi.updatechecker.UpdateCheckResult
 import com.artillexstudios.axapi.updatechecker.UpdateChecker
@@ -17,16 +16,14 @@ import com.artillexstudios.axmines.listener.BlockListener
 import com.artillexstudios.axmines.mines.Mine
 import com.artillexstudios.axmines.mines.MineTicker
 import com.artillexstudios.axmines.mines.Mines
-import java.time.Duration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bstats.bukkit.Metrics
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import revxrsal.commands.bukkit.BukkitCommandHandler
-import revxrsal.zapper.repository.MavenRepository
+import java.time.Duration
 
 class AxMinesPlugin : AxPlugin() {
-    private val metrics = AxMetrics(this, 4)
 
     companion object {
         lateinit var INSTANCE: AxMinesPlugin
@@ -111,18 +108,15 @@ class AxMinesPlugin : AxPlugin() {
                 .check(Bukkit.getConsoleSender())
         }
 
-        this.metrics.start()
         MineTicker.schedule()
         reload()
     }
 
     override fun disable() {
-        this.metrics.cancel()
     }
 
     override fun dependencies(manager: DependencyManagerWrapper) {
-        manager.repository(MavenRepository.jitpack())
-        manager.repository(MavenRepository.mavenCentral())
+        manager.repository("https://jitpack.io/")
         manager.dependency("org.slf4j:slf4j-api:2.0.9")
         manager.dependency("org.apache.commons:commons-text:1.11.0")
         manager.dependency("commons-io:commons-io:2.15.0")
