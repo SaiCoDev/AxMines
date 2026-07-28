@@ -10,6 +10,7 @@ version = "1.8.0"
 repositories {
     mavenCentral()
 
+    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.artillex-studios.com/releases/")
     maven("https://repo.alessiodp.com/releases/")
     maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -22,7 +23,7 @@ dependencies {
     implementation("com.artillexstudios.axapi:axapi:2.1.0-DEV-37:all")
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation("dev.triumphteam:triumph-gui:3.1.7")
-    compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     compileOnly("org.slf4j:slf4j-api:2.0.9")
     compileOnly("org.apache.commons:commons-text:1.11.0")
     compileOnly("commons-io:commons-io:2.15.0")

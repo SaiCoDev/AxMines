@@ -3,7 +3,8 @@ package com.artillexstudios.axmines.selection
 import com.artillexstudios.axapi.serializers.Serializers
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axmines.AxMinesPlugin
-import java.util.WeakHashMap
+import io.papermc.paper.registry.RegistryAccess
+import io.papermc.paper.registry.RegistryKey
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Location
 import org.bukkit.Material
@@ -13,10 +14,16 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
+import java.util.*
 
 object SelectionWand {
     private val key = NamespacedKey(AxMinesPlugin.INSTANCE, "selection_wand")
     private val selections = WeakHashMap<Player, Selection>()
+
+    private val glow: Enchantment? by lazy {
+        val registry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT)
+        registry.get(NamespacedKey.minecraft("power"))
+    }
 
     fun isWand(itemStack: ItemStack): Boolean {
         if (itemStack.type.isAir) return false
@@ -31,7 +38,7 @@ object SelectionWand {
 
         meta.setDisplayName(StringUtils.formatToString("<#00AAFF><b>Selection wand"))
         meta.lore = listOf("", StringUtils.formatToString("<#00AAFF><b>Left click"), StringUtils.formatToString(" <gray>- Select position #1"), "", StringUtils.formatToString("<#00AAFF><b>Right click"), StringUtils.formatToString(" <gray>- Select position #2"))
-        meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true)
+        glow?.let { meta.addEnchant(it, 1, true) }
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS)
 
         meta.persistentDataContainer.set(key, PersistentDataType.BYTE, 0)

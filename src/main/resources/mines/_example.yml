@@ -35,6 +35,13 @@ reset:
   # reset set to 0 to disable
   percent: 10
 
+fortune:
+  max-level: -1
+  # vanilla
+  # linear - A flat multiplier of 1 + (level * per-level), so fortune 3 at a per-level of 0.5 is always 2.5x
+  type: vanilla
+  per-level: 0.5
+
 random-rewards:
   - chance: 0.001
     prevent-drops: false # Set to true if you don't want the block broken to drop it's default loot
@@ -44,6 +51,8 @@ random-rewards:
     items: # Item reward
       - type: stone
         name: "oreo"
+        amount: 1
+        fortune: true
     commands: # Command reward
       - "eco give <player> 100000"
 

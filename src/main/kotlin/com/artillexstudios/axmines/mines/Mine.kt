@@ -8,24 +8,10 @@ import com.artillexstudios.axapi.utils.ItemBuilder
 import com.artillexstudios.axapi.utils.StringUtils
 import com.artillexstudios.axmines.config.impl.Config
 import com.artillexstudios.axmines.config.impl.MineConfig
-import com.artillexstudios.axmines.mines.setter.BlockSetter
-import com.artillexstudios.axmines.mines.setter.BukkitBlockSetter
-import com.artillexstudios.axmines.mines.setter.FastBlockSetter
-import com.artillexstudios.axmines.mines.setter.ItemsAdderBukkitBlockSetter
-import com.artillexstudios.axmines.mines.setter.ItemsAdderFastBlockSetter
-import com.artillexstudios.axmines.mines.setter.OraxenBukkitBlockSetter
-import com.artillexstudios.axmines.mines.setter.OraxenFastBlockSetter
+import com.artillexstudios.axmines.mines.setter.*
+import com.artillexstudios.axmines.utils.FortuneUtils
 import com.artillexstudios.axmines.utils.TimeUtils
-import java.io.File
-import java.util.Locale
-import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.pow
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.md_5.bungee.api.ChatMessageType
-import net.md_5.bungee.api.chat.TextComponent
 import org.apache.commons.math3.distribution.EnumeratedDistribution
 import org.apache.commons.math3.random.RandomDataGenerator
 import org.apache.commons.math3.util.Pair
@@ -38,6 +24,13 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.inventory.ItemStack
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.File
+import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
 
 class Mine(val file: File, reset: Boolean = true) {
     companion object {
@@ -122,12 +115,13 @@ class Mine(val file: File, reset: Boolean = true) {
 
         val rewards = randomRewards(block)
         if (rewards.isNotEmpty()) {
+            val fortune = FortuneUtils.level(player, config)
             rewards.forEach {
                 if (it.preventDrops) {
                     event.isDropItems = false
                 }
 
-                it.execute(player)
+                it.execute(player, fortune, config)
             }
         }
 
@@ -332,9 +326,12 @@ class Mine(val file: File, reset: Boolean = true) {
 
             val items: List<HashMap<Any, Any>> =
                 (it["items"] ?: listOf<HashMap<Any, Any>>()) as? List<HashMap<Any, Any>> ?: return@forEach
-            val itemStacks = mutableListOf<ItemStack>()
+            val itemStacks = mutableListOf<RewardItem>()
             items.forEach { map ->
-                itemStacks.add(ItemBuilder.create(map).get())
+                val fortune = map["fortune"] as? Boolean ?: false
+                val builderMap = LinkedHashMap(map)
+                builderMap.remove("fortune")
+                itemStacks.add(RewardItem(ItemBuilder.create(builderMap).get(), fortune))
             }
 
             val commands: List<String> = (it["commands"] ?: listOf<String>()) as? List<String> ?: return@forEach
@@ -450,21 +447,31 @@ class Mine(val file: File, reset: Boolean = true) {
     }
 
     @JvmRecord
+    data class RewardItem(val item: ItemStack, val fortune: Boolean)
+
+    @JvmRecord
     data class Reward(
         val chance: Double,
         val commands: List<String>,
-        val items: List<ItemStack>,
+        val items: List<RewardItem>,
         val blocks: List<Material>,
         val preventDrops: Boolean
     ) {
 
-        fun execute(player: Player) {
+        fun execute(player: Player, fortune: Int, config: MineConfig) {
             commands.forEach {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), it.replace("<player>", player.name))
             }
 
             items.forEach {
-                player.inventory.addItem(it)
+                val item = it.item.clone()
+                if (it.fortune) {
+                    item.amount = FortuneUtils.apply(item.amount, fortune, config)
+                }
+
+                if (item.amount > 0) {
+                    player.inventory.addItem(item)
+                }
             }
         }
 

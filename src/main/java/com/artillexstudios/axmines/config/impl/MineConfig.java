@@ -35,6 +35,18 @@ public class MineConfig extends Messages {
     @Key("reset.percent")
     public double RESET_PERCENT = 10.0;
 
+    @Key("fortune.max-level")
+    @Comment({"The highest fortune level we read off the pickaxe.", "Set to -1 to use whatever level the tool actually has."})
+    public int FORTUNE_MAX_LEVEL = -1;
+
+    @Key("fortune.type")
+    @Comment({"How a fortune level is turned into a multiplier.", "vanilla - The formula minecraft itself uses on ores, an even chance of 1x, 1x, 2x ... (level + 1)x", "linear - A flat multiplier of 1 + (level * per-level), so fortune 3 at a per-level of 0.5 is always 2.5x"})
+    public String FORTUNE_TYPE = "vanilla";
+
+    @Key("fortune.per-level")
+    @Comment({"The bonus each fortune level is worth when type is linear.", "Fractional results are rolled, so a 2.5x on a single item gives 2 half the time and 3 the other half."})
+    public double FORTUNE_PER_LEVEL = 0.5;
+
     @Key("random-rewards")
     public List<Map<String, Object>> RANDOM_REWARDS = List.of(Map.of("chance", 0.001, "blocks", List.of("diamond_block", "emerald_block"), "commands", List.of("eco give <player> 100000")));
 
